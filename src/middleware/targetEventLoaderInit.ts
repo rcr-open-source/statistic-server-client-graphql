@@ -14,7 +14,7 @@ export const targetEventLoaderInit: MiddlewareFn<Context> = (
 
     const batchFn: (ids: string[]) => Promise<(Target | null)[]> =  async (ids: string[])
         : Promise<(Target | null)[]> => {
-        const events = await Promise.all(ids.map(id => context.databaseApi.queries.findEvent(id)));
+        const events = await Promise.all(ids.map(id => context.clientDatabaseApi.queries.findEvent(id)));
         const targetIds = events.map(event => event?.targetID);
         return Promise.all(targetIds.map(targetId => targetId ? targetQuery(context, targetId) : null));
     };

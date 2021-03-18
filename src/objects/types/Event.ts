@@ -6,9 +6,7 @@ import { Node } from "@umk-stat/statistic-server-core";
 import { Context } from "@umk-stat/statistic-server-core";
 import { getHashArgs } from "@umk-stat/statistic-server-core";
 import { targetEventLoaderInit } from "../../middleware";
-import { viewerEventLoaderInit } from "../../middleware";
 import { Target } from "./Target";
-import { Viewer } from "./Viewer";
 
 @ObjectType({
     implements: Node,
@@ -57,21 +55,4 @@ export class Event implements Node {
     
     }
 
-    @UseMiddleware(viewerEventLoaderInit)
-    @Field(() => Viewer, {
-        nullable: false,
-    })
-    public async viewer(
-
-        @Ctx()
-            context: Context,
-        @Root()
-            { id }: Event,
-    ): Promise<Viewer> {
-
-        const eventType = "viewerEventLoader";
-        const hash = getHashArgs([]);
-        return context.dataLoadersMap.get(eventType)?.get(hash)?.load(id);
-
-    }
 }

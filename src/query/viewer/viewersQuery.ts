@@ -5,7 +5,7 @@ export async function viewersQuery(
     context: Context
 ): Promise<Viewer[]> {
 
-    const viewersDb = await context.databaseApi.queries.findViewers();
+    const viewersDb = await context.clientDatabaseApi.queries.findViewers();
     return viewersDb.map((viewerDb) => Viewer.builderFromDb(viewerDb.get()));
 
 }

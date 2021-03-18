@@ -6,7 +6,7 @@ export async function targetQuery(
     id: string,
 ): Promise<Target | null> {
 
-    const targetDb = await context.databaseApi.queries.findTarget(id);
+    const targetDb = await context.clientDatabaseApi.queries.findTarget(id);
     return targetDb === null ? null : Target.builderFromDb(targetDb.get());
 
 }

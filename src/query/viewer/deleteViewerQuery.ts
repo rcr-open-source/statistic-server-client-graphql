@@ -6,6 +6,6 @@ export async function deleteViewerQuery(
     id: string,
 ): Promise<Viewer | null> {
 
-    const viewerDb = await context.databaseApi.queries.deleteViewer(id);
+    const viewerDb = await context.clientDatabaseApi.queries.deleteViewer(id);
     return viewerDb === null ? null : Viewer.builderFromDb(viewerDb.get());
 }

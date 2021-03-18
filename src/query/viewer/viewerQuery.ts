@@ -6,7 +6,7 @@ export async function viewerQuery(
     id: string,
 ): Promise<Viewer | null> {
 
-    const viewerDb = await context.databaseApi.queries.findViewer(id);
+    const viewerDb = await context.clientDatabaseApi.queries.findViewer(id);
     return viewerDb === null ? null : Viewer.builderFromDb(viewerDb.get());
 
 }

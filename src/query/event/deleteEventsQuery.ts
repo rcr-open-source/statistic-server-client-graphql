@@ -5,7 +5,7 @@ export async function deleteEventsQuery(
     context: Context
 ): Promise<Event[]> {
 
-    const eventsDb = await context.databaseApi.queries.deleteEvents();
+    const eventsDb = await context.clientDatabaseApi.queries.deleteEvents();
     return eventsDb.map((eventDb) => Event.builderFromDb(eventDb.get()));
 
 }

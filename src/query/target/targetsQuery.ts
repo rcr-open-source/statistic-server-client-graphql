@@ -5,7 +5,7 @@ export async function targetsQuery(
     context: Context
 ): Promise<Target[]> {
 
-    const targetsDb = await context.databaseApi.queries.findTargets();
+    const targetsDb = await context.clientDatabaseApi.queries.findTargets();
     return targetsDb.map((targetDb) => Target.builderFromDb(targetDb.get()));
 
 }

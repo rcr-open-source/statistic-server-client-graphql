@@ -8,7 +8,7 @@ export async function createViewerQuery(
     compInfo: string,
 ): Promise<Viewer> {
 
-    const viewerDb = await context.databaseApi.queries.createViewer({
+    const viewerDb = await context.clientDatabaseApi.queries.createViewer({
         identifier,
         userInfo,
         compInfo,

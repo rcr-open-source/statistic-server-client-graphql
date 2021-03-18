@@ -1,10 +1,6 @@
 import { TargetAttributes } from "@umk-stat/statistic-server-client-database";
-import {Ctx, Field, ObjectType, Root, UseMiddleware} from "type-graphql";
+import { Field, ObjectType,} from "type-graphql";
 import { Node } from "@umk-stat/statistic-server-core";
-import {Context} from "@umk-stat/statistic-server-core";
-import {getHashArgs} from "@umk-stat/statistic-server-core";
-import {System} from "@umk-stat/statistic-server-system-graphql";
-import {systemTargetLoaderInit} from "../../middleware";
 
 @ObjectType({
     implements: Node,
@@ -18,6 +14,7 @@ export class Target implements Node {
         const target = new Target();
         target.id = object.id;
         target.name = object.name;
+        target.systemID = object.systemID;
         return target;
 
     }
@@ -29,22 +26,9 @@ export class Target implements Node {
     })
     public name: string
 
-    @UseMiddleware(systemTargetLoaderInit)
-    @Field(() => System, {
+    @Field(() => String, {
         nullable: false,
     })
-    public async system(
+    systemID: string;
 
-        @Ctx()
-            context: Context,
-        @Root()
-            { id }: Target
-
-    ): Promise<System> {
-
-        const eventType = "systemTargetLoader";
-        const hash = getHashArgs([]);
-        return context.dataLoadersMap.get(eventType)?.get(hash)?.load(id);
-
-    }
 }

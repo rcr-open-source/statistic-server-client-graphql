@@ -4,3 +4,4 @@ export * from "./targetsQuery";
 export * from "./updateTargetsQuery";
 export * from "./deleteTargetQuery";
 export * from "./deleteTargetsQuery";
+export * from "./findTargetsBySystemId";

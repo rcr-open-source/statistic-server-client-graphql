@@ -6,7 +6,7 @@ export async function eventQuery(
     id: string,
 ): Promise<Event | null> {
 
-    const eventDb = await context.databaseApi.queries.findEvent(id);
+    const eventDb = await context.clientDatabaseApi.queries.findEvent(id);
     return eventDb === null ? null : Event.builderFromDb(eventDb.get());
 
 }

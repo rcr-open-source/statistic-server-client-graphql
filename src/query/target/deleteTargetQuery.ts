@@ -6,7 +6,7 @@ export async function deleteTargetQuery(
     id: string,
 ): Promise<Target | null> {
 
-    const targetDb = await context.databaseApi.queries.deleteTarget(id);
+    const targetDb = await context.clientDatabaseApi.queries.deleteTarget(id);
     return targetDb === null ? null : Target.builderFromDb(targetDb.get());
 
 }

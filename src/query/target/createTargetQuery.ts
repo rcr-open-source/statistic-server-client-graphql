@@ -7,7 +7,7 @@ export async function createTargetQuery(
     systemID: string,
 ): Promise<Target> {
 
-    const targetDb = await context.databaseApi.queries.createTarget({ 
+    const targetDb = await context.clientDatabaseApi.queries.createTarget({ 
         name,
         systemID,
     });

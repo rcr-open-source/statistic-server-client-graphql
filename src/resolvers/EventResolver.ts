@@ -26,17 +26,13 @@ export class EventResolver {
             nullable: false,
         })
             targetID: string,
-        @Arg("viewerID", {
-            nullable: false,
-        })
-            viewerID: string,
         @Arg("time", {
             nullable: true,
         })
             time: Date,
     ): Promise<Event> {
 
-        return createEventQuery(context, name, targetID, viewerID, time);
+        return createEventQuery(context, name, targetID, time);
 
     }
 
@@ -89,17 +85,13 @@ export class EventResolver {
             nullable: true,
         })
             targetID: string,
-        @Arg("viewerID", {
-            nullable: true,
-        })
-            viewerID: string,
         @Arg("time", {
             nullable: true,
         })
             time: Date
     ): Promise<Event | null> {
 
-        return updateEventQuery(context, id, name, targetID, viewerID, time);
+        return updateEventQuery(context, id, name, targetID, time);
 
     }
 

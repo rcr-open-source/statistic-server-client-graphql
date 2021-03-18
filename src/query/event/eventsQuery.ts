@@ -5,7 +5,7 @@ export async function eventsQuery(
     context: Context
 ): Promise<Event[]> {
 
-    const eventsDb = await context.databaseApi.queries.findEvents();
+    const eventsDb = await context.clientDatabaseApi.queries.findEvents();
     return eventsDb.map((eventDb) => Event.builderFromDb(eventDb.get()));
 
 }

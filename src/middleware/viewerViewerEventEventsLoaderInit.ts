@@ -5,17 +5,17 @@ import { Viewer } from "../objects/types";
 import { setLoaderToContext } from "@umk-stat/statistic-server-core";
 import { viewerQuery } from "../query";
 
-export const viewerViewerTargetTargetsLoaderInit: MiddlewareFn<Context> = (
+export const viewerViewerEventEventsLoaderInit: MiddlewareFn<Context> = (
     { context, args },
     next
 ) => {
 
-    const middlewareType = "viewerViewerTargetTargetsLoader";
+    const middlewareType = "viewerViewerEventEventsLoader";
 
     const batchFn: (ids: string[]) => Promise<(Viewer | null)[]> =  async (ids: string[])
         : Promise<(Viewer | null)[]> => {
-        const viewerTargetTargets = await Promise.all(ids.map(id => context.databaseApi.queries.findViewerTargetTargets(id)));
-        const viewerIds = viewerTargetTargets.map(vtt => vtt?.viewerID);
+        const viewerEventEvents = await Promise.all(ids.map(id => context.clientDatabaseApi.queries.findViewerEventEvents(id)));
+        const viewerIds = viewerEventEvents.map(vee => vee?.viewerID);
         return Promise.all(viewerIds.map(viewerId => viewerId ? viewerQuery(context, viewerId) : null));
     };
 
