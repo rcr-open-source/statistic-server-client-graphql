@@ -4,3 +4,4 @@ export * from "./eventsQuery";
 export * from "./updateEventsQuery";
 export * from "./deleteEventQuery";
 export * from "./deleteEventsQuery";
+export * from "./findEventsByTargetId";

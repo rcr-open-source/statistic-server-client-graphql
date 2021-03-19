@@ -26,9 +26,13 @@ export class ViewerEventEventsResolver {
             nullable: false,
         })
             viewerID: string,
+        @Arg("time", {
+            nullable: true,
+        })
+            time: Date,
     ): Promise<ViewerEventEvents> {
 
-        return createViewerEventEventsQuery(context, eventID, viewerID);
+        return createViewerEventEventsQuery(context, eventID, viewerID, time);
 
     }
 
@@ -82,9 +86,13 @@ export class ViewerEventEventsResolver {
             nullable: true,
         })
             eventID: string,
+        @Arg("time", {
+            nullable: true,
+        })
+            time: Date
     ): Promise<ViewerEventEvents | null> {
 
-        return updateViewerEventEventsQuery(context, id, viewerID, eventID);
+        return updateViewerEventEventsQuery(context, id, viewerID, eventID, time);
 
     }
 

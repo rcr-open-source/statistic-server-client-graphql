@@ -6,10 +6,9 @@ export async function updateEventQuery(
     id: string,
     name?: string,
     targetID?: string,
-    time?: Date,
 ): Promise<null | Event> {
 
-    const eventDb = await context.clientDatabaseApi.queries.updateEvent(id, name, targetID, time);
+    const eventDb = await context.clientDatabaseApi.queries.updateEvent(id, name, targetID);
     return eventDb === null ? null : Event.builderFromDb(eventDb.get());
 
 }

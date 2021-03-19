@@ -6,9 +6,10 @@ export async function updateViewerEventEventsQuery(
     id: string,
     viewerID?: string,
     eventID?: string,
+    time?: Date,
 ): Promise<null | ViewerEventEvents> {
 
-    const viewerEventEventsDb = await context.clientDatabaseApi.queries.updateViewerEventEvents(id, viewerID, eventID);
+    const viewerEventEventsDb = await context.clientDatabaseApi.queries.updateViewerEventEvents(id, viewerID, eventID, time);
     return viewerEventEventsDb === null ? null : ViewerEventEvents.builderFromDb(viewerEventEventsDb.get());
 
 }

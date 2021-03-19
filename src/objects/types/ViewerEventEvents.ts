@@ -20,11 +20,17 @@ export class ViewerEventEvents implements Node {
 
         const viewerEventEvents = new ViewerEventEvents();
         viewerEventEvents.id = object.id;
+        viewerEventEvents.time = object.time;
         return viewerEventEvents;
 
     }
 
     public id: string
+
+    @Field(() => Date, {
+        nullable: false,
+    })
+    public time: Date
 
     @UseMiddleware(eventViewerEventEventsLoaderInit)
     @Field(() => Event, {

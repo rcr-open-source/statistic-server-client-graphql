@@ -1,7 +1,6 @@
 import { ViewerAttributes } from "@umk-stat/statistic-server-client-database";
 import { Field, ObjectType } from "type-graphql";
 import { Node } from "@umk-stat/statistic-server-core";
-import {strict} from "assert";
 
 @ObjectType({
     implements: Node,

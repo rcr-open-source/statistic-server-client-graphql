@@ -19,7 +19,6 @@ export class Event implements Node {
         const event = new Event();
         event.id = object.id;
         event.name = object.name;
-        event.time = object.time;
         return event;
 
     }
@@ -30,11 +29,6 @@ export class Event implements Node {
         nullable: false,
     })
     public name: string
-
-    @Field(() => Date, {
-        nullable: false,
-    })
-    public time: Date
 
     @UseMiddleware(targetEventLoaderInit)
     @Field(() => Target, {
