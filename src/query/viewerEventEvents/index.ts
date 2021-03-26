@@ -4,3 +4,4 @@ export * from "./viewerEventEventssQuery";
 export * from "./updateViewerEventEventssQuery";
 export * from "./deleteViewerEventEventsQuery";
 export * from "./deleteViewerEventEventssQuery";
+export * from "./postEvent";

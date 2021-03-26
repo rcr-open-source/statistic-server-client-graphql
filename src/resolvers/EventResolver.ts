@@ -3,10 +3,10 @@ import {
 } from "type-graphql";
 import {
     eventQuery, eventsQuery, createEventQuery,
-    updateEventQuery,
+    updateEventQuery, findEventByName,
     deleteEventQuery, deleteEventsQuery,
 } from "../query/event";
-import { Event } from "../objects/types";
+import { Event, ViewerEventEvents } from "../objects/types";
 import { Context } from "@umk-stat/statistic-server-core";
 
 @Resolver()
@@ -113,6 +113,22 @@ export class EventResolver {
     ): Promise<Event[]> {
 
         return deleteEventsQuery(context);
+
+    }
+
+    @Query(() => Event, {
+        nullable: false,
+    })
+    public async findEventByName(
+        @Ctx()
+            context: Context,
+        @Arg("name", {
+            nullable: false,
+        })
+            name: string,   
+    ): Promise<Event | null> {
+
+        return findEventByName(context, name);
 
     }
 

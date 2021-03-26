@@ -3,7 +3,7 @@ import {
 } from "type-graphql";
 import {
     viewerEventEventsQuery, viewerEventEventssQuery, createViewerEventEventsQuery,
-    updateViewerEventEventsQuery,
+    updateViewerEventEventsQuery, postEvent,
     deleteViewerEventEventsQuery, deleteViewerEventEventssQuery,
 } from "../query/viewerEventEvents";
 import { ViewerEventEvents } from "../objects/types";
@@ -126,6 +126,34 @@ export class ViewerEventEventsResolver {
     ): Promise<ViewerEventEvents[]> {
 
         return deleteViewerEventEventssQuery(context);
+
+    }
+
+    @Query(() => ViewerEventEvents, {
+        nullable: true,
+    })
+    public async postEvent(
+        @Ctx()
+            context: Context,
+        @Arg("eventName", {
+            nullable: false,
+        })
+        eventName: string,
+        @Arg("identifier", {
+            nullable: false,
+        })
+        identifier: string,
+        @Arg("compInfo", {
+            nullable: false,
+        })
+        compInfo: string,
+        @Arg("userInfo", {
+            nullable: false,
+        })
+        userInfo: string,
+    ): Promise<ViewerEventEvents | null> {
+
+        return postEvent(context, eventName, identifier, compInfo, userInfo);
 
     }
 
