@@ -1,7 +1,7 @@
 import { Context } from "@umk-stat/statistic-server-core";
 import { ViewerEventEvents } from "../../objects/types";
 
-export async function postEvent(
+export async function postViewerEvent(
   context: Context,
   eventName: string,
   identifier: string,
@@ -9,7 +9,7 @@ export async function postEvent(
   userInfo: string,
 ): Promise<ViewerEventEvents | null> {
 
-  const vee = await context.clientDatabaseApi.queries.postEvent(
+  const vee = await context.clientDatabaseApi.queries.postViewerEvent(
     eventName,
     identifier,
     compInfo,

@@ -1,9 +1,9 @@
 import {
-    Resolver, Query, Ctx, Arg, Mutation,
+    Resolver, Query, Ctx, Arg, Mutation, Subscription, Args, Root,
 } from "type-graphql";
 import {
     viewerEventEventsQuery, viewerEventEventssQuery, createViewerEventEventsQuery,
-    updateViewerEventEventsQuery, postEvent,
+    updateViewerEventEventsQuery, postViewerEvent,
     deleteViewerEventEventsQuery, deleteViewerEventEventssQuery,
 } from "../query/viewerEventEvents";
 import { ViewerEventEvents } from "../objects/types";
@@ -132,7 +132,7 @@ export class ViewerEventEventsResolver {
     @Query(() => ViewerEventEvents, {
         nullable: true,
     })
-    public async postEvent(
+    public async postViewerEvent(
         @Ctx()
             context: Context,
         @Arg("eventName", {
@@ -153,7 +153,7 @@ export class ViewerEventEventsResolver {
         userInfo: string,
     ): Promise<ViewerEventEvents | null> {
 
-        return postEvent(context, eventName, identifier, compInfo, userInfo);
+        return postViewerEvent(context, eventName, identifier, compInfo, userInfo);
 
     }
 
