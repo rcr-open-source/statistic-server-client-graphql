@@ -3,7 +3,7 @@ import { MiddlewareFn } from "type-graphql";
 import { Context } from "@umk-stat/statistic-server-core";
 import { setLoaderToContext } from "@umk-stat/statistic-server-core";
 import { Event } from "../objects/types";
-import { eventQuery } from "../query";
+import { eventQuery, viewerEventEventsQuery } from "../query";
 
 export const eventViewerEventEventsLoaderInit: MiddlewareFn<Context> = (
     { context, args },

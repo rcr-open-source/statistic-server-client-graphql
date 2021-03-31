@@ -1,5 +1,5 @@
 import {
-    Resolver, Query, Ctx, Arg, Mutation,
+    Resolver, Query, Ctx, Arg, Mutation, Publisher, Subscription, Args, Root, PubSub,
 } from "type-graphql";
 import {
     eventQuery, eventsQuery, createEventQuery,
@@ -8,6 +8,8 @@ import {
 } from "../query/event";
 import { Event, ViewerEventEvents } from "../objects/types";
 import { Context } from "@umk-stat/statistic-server-core";
+import { Topics } from "../objects";
+import { EventSubscriptionArgs, TargetExecutionCountSubscriptionArgs } from "../objects"
 
 @Resolver()
 export class EventResolver {
@@ -130,6 +132,73 @@ export class EventResolver {
 
         return findEventByName(context, name);
 
+    }
+
+    @Mutation(() => Event, {
+        nullable: true,
+    })
+    public async postViewerEvent(
+        @Ctx()
+        context: Context,
+        @Arg("eventName", {
+            nullable: false,
+        })
+        eventName: string,
+        @Arg("identifier", {
+            nullable: false,
+        })
+        identifier: string,
+        @Arg("compInfo", {
+            nullable: false,
+        })
+        compInfo: string,
+        @Arg("userInfo", {
+            nullable: false,
+        })
+        userInfo: string,
+
+        @PubSub(Topics.Event)
+        publishEvent: Publisher<Event>,
+
+        @PubSub(Topics.TargetExecutionCount)
+        publishTargetExecutionCount: Publisher<Event>,
+    ): Promise<Event | null> {
+
+        const queryresult = await context.clientDatabaseApi.queries.postViewerEvent(eventName, identifier, compInfo, userInfo);
+        if (queryresult) {
+            const publishResult = Event.builderFromDb(queryresult.get());
+            const viewerEventEvents = context.clientDatabaseApi.queries.findViewerEventEventsByEventId(queryresult.id);
+            await publishEvent(publishResult);
+            await publishTargetExecutionCount(publishResult);
+            return publishResult;
+        }
+        return null;
+    }
+
+    @Subscription(() => Event, {
+        topics: Topics.Event,
+    })
+    public async eventSubscription(
+        @Args(() => EventSubscriptionArgs)
+        args: EventSubscriptionArgs,
+        @Root()
+        root: Event,
+
+    ): Promise<Event> {
+        return root;
+    }
+
+    @Subscription(() => Event, {
+        topics: Topics.TargetExecutionCount,
+    })
+    public async targetExecutionCountSubscription(
+        @Args(() => TargetExecutionCountSubscriptionArgs)
+        args: TargetExecutionCountSubscriptionArgs,
+        @Root()
+        root: Event,
+
+    ): Promise<Event> {
+        return root;
     }
 
 }

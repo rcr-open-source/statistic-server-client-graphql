@@ -1,9 +1,9 @@
 import {
-    Resolver, Query, Ctx, Arg, Mutation, Subscription, Args, Root,
+    Resolver, Query, Ctx, Arg, Mutation,
 } from "type-graphql";
 import {
     viewerEventEventsQuery, viewerEventEventssQuery, createViewerEventEventsQuery,
-    updateViewerEventEventsQuery, postViewerEvent,
+    updateViewerEventEventsQuery,
     deleteViewerEventEventsQuery, deleteViewerEventEventssQuery,
 } from "../query/viewerEventEvents";
 import { ViewerEventEvents } from "../objects/types";
@@ -17,22 +17,22 @@ export class ViewerEventEventsResolver {
     })
     public async createViewerEventEvents(
         @Ctx()
-            context: Context,
+        context: Context,
         @Arg("eventID", {
             nullable: false,
         })
-            eventID: string,
+        eventID: string,
         @Arg("viewerID", {
             nullable: false,
         })
-            viewerID: string,
+        viewerID: string,
         @Arg("time", {
             nullable: true,
         })
-            time: Date,
+        time: Date,
     ): Promise<ViewerEventEvents> {
 
-        return createViewerEventEventsQuery(context, eventID, viewerID, time);
+        return await createViewerEventEventsQuery(context, eventID, viewerID, time);
 
     }
 
@@ -41,12 +41,12 @@ export class ViewerEventEventsResolver {
     })
     public async viewerEventEvents(
         @Ctx()
-            context: Context,
+        context: Context,
 
         @Arg("id", {
             nullable: false,
         })
-            id: string,
+        id: string,
     ): Promise<ViewerEventEvents | null> {
 
         return viewerEventEventsQuery(context, id);
@@ -58,7 +58,7 @@ export class ViewerEventEventsResolver {
     })
     public async viewerEventEventss(
         @Ctx()
-            context: Context,
+        context: Context,
     ): Promise<ViewerEventEvents[]> {
 
         return viewerEventEventssQuery(context);
@@ -70,26 +70,26 @@ export class ViewerEventEventsResolver {
     })
     public async updateViewerEventEvents(
         @Ctx()
-            context: Context,
+        context: Context,
 
         @Arg("id", {
             nullable: false,
         })
-            id: string,
+        id: string,
 
         @Arg("viewerID", {
             nullable: true,
         })
-            viewerID: string,
+        viewerID: string,
 
         @Arg("eventID", {
             nullable: true,
         })
-            eventID: string,
+        eventID: string,
         @Arg("time", {
             nullable: true,
         })
-            time: Date
+        time: Date
     ): Promise<ViewerEventEvents | null> {
 
         return updateViewerEventEventsQuery(context, id, viewerID, eventID, time);
@@ -105,12 +105,12 @@ export class ViewerEventEventsResolver {
     })
     public async deleteViewerEventEvents(
         @Ctx()
-            context: Context,
+        context: Context,
 
         @Arg("id", {
             nullable: false,
         })
-            id: string,
+        id: string,
     ): Promise<ViewerEventEvents | null> {
 
         return deleteViewerEventEventsQuery(context, id);
@@ -122,38 +122,10 @@ export class ViewerEventEventsResolver {
     })
     public async deleteViewerEventEventss(
         @Ctx()
-            context: Context,
+        context: Context,
     ): Promise<ViewerEventEvents[]> {
 
         return deleteViewerEventEventssQuery(context);
-
-    }
-
-    @Query(() => ViewerEventEvents, {
-        nullable: true,
-    })
-    public async postViewerEvent(
-        @Ctx()
-            context: Context,
-        @Arg("eventName", {
-            nullable: false,
-        })
-        eventName: string,
-        @Arg("identifier", {
-            nullable: false,
-        })
-        identifier: string,
-        @Arg("compInfo", {
-            nullable: false,
-        })
-        compInfo: string,
-        @Arg("userInfo", {
-            nullable: false,
-        })
-        userInfo: string,
-    ): Promise<ViewerEventEvents | null> {
-
-        return postViewerEvent(context, eventName, identifier, compInfo, userInfo);
 
     }
 

@@ -48,7 +48,6 @@ export class ViewerEventEvents implements Node {
 
         const eventType = "eventViewerEventEventsLoader";
         const hash = getHashArgs([]);
-
         return context.dataLoadersMap.get(eventType)?.get(hash)?.load(id);
 
     }

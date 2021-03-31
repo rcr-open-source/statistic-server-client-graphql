@@ -1,8 +1,9 @@
 import { TargetAttributes } from "@umk-stat/statistic-server-client-database";
 import {
     Ctx, Field, ObjectType, Root, UseMiddleware,
+    Args, Arg,
 } from "type-graphql";
-import { eventsTargetDataLoaderInit } from "../../middleware";
+import { eventsTargetDataLoaderInit, executionCountTargetLoaderInit, viewerCountTargetLoaderInit } from "../../middleware";
 import { Context } from "@umk-stat/statistic-server-core";
 import { getHashArgs } from "@umk-stat/statistic-server-core";
 import { Node } from "@umk-stat/statistic-server-core";
@@ -49,7 +50,7 @@ export class Target implements Node {
         @Root()
             { id }: Event,
 
-    ): Promise<Event> {
+    ): Promise<Event[]> {
 
         const eventType = "eventsTargetDataLoader";
         const hash = getHashArgs([]);
@@ -58,4 +59,65 @@ export class Target implements Node {
 
     }
 
+    // @UseMiddleware(viewerEventEventsTargetDataLoaderInit)
+    // @Field(() => [ViewerEventEvents], {
+    //     nullable: false,
+    // })
+    // public async viewerEventEvents(
+
+    //     @Ctx()
+    //         context: Context,
+    //     @Root()
+    //         { id }: Event,
+
+    // ): Promise<ViewerEventEvents[]> {
+
+    //     const eventType = "viewerEventEventsTargetDataLoader";
+    //     const hash = getHashArgs([]);
+    //     const dataloaderResult = await context.dataLoadersMap.get(eventType)?.get(hash)?.load(id);
+    //     const result = dataloaderResult.reduce((current, result) => {
+    //         result = result.concat(current);
+    //         return result;
+    //     }, []);
+    //     return result;
+
+    // }
+
+    @UseMiddleware(executionCountTargetLoaderInit)
+    @Field(() => Number, {
+        nullable: false,
+    })
+    public async executionCount(
+
+        @Ctx()
+        context: Context,
+
+        @Root()
+            { id }: Target,
+
+    ): Promise<number> {
+
+        const edgeType = "executionCountTargetLoader";
+        const hash = getHashArgs([]);
+        return context.dataLoadersMap.get(edgeType)?.get(hash)?.load(id);;
+    }
+
+    @UseMiddleware(viewerCountTargetLoaderInit)
+    @Field(() => Number, {
+        nullable: false,
+    })
+    public async viewerCount(
+
+        @Ctx()
+        context: Context,
+
+        @Root()
+            { id }: Target,
+
+    ): Promise<number> {
+
+        const edgeType = "viewerCountTargetLoader";
+        const hash = getHashArgs([]);
+        return context.dataLoadersMap.get(edgeType)?.get(hash)?.load(id);;
+    }
 }

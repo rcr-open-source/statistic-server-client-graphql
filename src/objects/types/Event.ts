@@ -1,11 +1,14 @@
-import { EventAttributes } from "@umk-stat/statistic-server-client-database";
+import { EventAttributes, ViewerEventEvents } from "@umk-stat/statistic-server-client-database";
 import {
-    Ctx, Field, ObjectType, Root, UseMiddleware
+    Ctx, Field, ObjectType, Root, UseMiddleware, Args
 } from "type-graphql";
 import { Node } from "@umk-stat/statistic-server-core";
 import { Context } from "@umk-stat/statistic-server-core";
 import { getHashArgs } from "@umk-stat/statistic-server-core";
 import { targetEventLoaderInit } from "../../middleware";
+import {
+    executionCountLoaderInit,
+} from "../../middleware";
 import { Target } from "./Target";
 
 @ObjectType({
@@ -47,6 +50,25 @@ export class Event implements Node {
         const hash = getHashArgs([]);
         return context.dataLoadersMap.get(eventType)?.get(hash)?.load(id);
     
+    }
+
+    @UseMiddleware(executionCountLoaderInit)
+    @Field(() => Number, {
+        nullable: false,
+    })
+    public async executionCount(
+
+        @Ctx()
+        context: Context,
+
+        @Root()
+            { id }: Event,
+
+    ): Promise<number> {
+
+        const edgeType = "executionCountLoader";
+        const hash = getHashArgs([]);
+        return context.dataLoadersMap.get(edgeType)?.get(hash)?.load(id);;
     }
 
 }
