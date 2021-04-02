@@ -3,7 +3,7 @@ import { MiddlewareFn } from "type-graphql";
 import { Context } from "@umk-stat/statistic-server-core";
 import { Viewer } from "../objects/types";
 import { setLoaderToContext } from "@umk-stat/statistic-server-core";
-import { viewerQuery } from "../query";
+import { viewerEventEventsQuery } from "../query";
 
 export const viewerViewerEventEventsLoaderInit: MiddlewareFn<Context> = (
     { context, args },
@@ -14,9 +14,10 @@ export const viewerViewerEventEventsLoaderInit: MiddlewareFn<Context> = (
 
     const batchFn: (ids: string[]) => Promise<(Viewer | null)[]> =  async (ids: string[])
         : Promise<(Viewer | null)[]> => {
-        const viewerEventEvents = await Promise.all(ids.map(id => context.clientDatabaseApi.queries.findViewerEventEvents(id)));
+        const viewerEventEvents = await Promise.all(ids.map(async id => await context.clientDatabaseApi.queries.findViewerEventEvents(id)));
         const viewerIds = viewerEventEvents.map(vee => vee?.viewerID);
-        return Promise.all(viewerIds.map(viewerId => viewerId ? viewerQuery(context, viewerId) : null));
+        const viewerDatabases = await Promise.all(viewerIds.map(async viewerId => viewerId ? await context.clientDatabaseApi.queries.findViewer(viewerId) : null));
+        return await Promise.all(viewerDatabases.map(viewer => viewer === null ? null : Viewer.builderFromDb(viewer.get())));
     };
 
     const newLoader = new DataLoader(batchFn);

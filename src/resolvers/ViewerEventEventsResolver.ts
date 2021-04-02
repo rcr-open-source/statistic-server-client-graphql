@@ -1,5 +1,5 @@
 import {
-    Resolver, Query, Ctx, Arg, Mutation,
+    Resolver, Query, Ctx, Arg, Mutation, Publisher, Subscription, Args, Root, PubSub, ResolverFilterData,
 } from "type-graphql";
 import {
     viewerEventEventsQuery, viewerEventEventssQuery, createViewerEventEventsQuery,
@@ -8,7 +8,12 @@ import {
 } from "../query/viewerEventEvents";
 import { ViewerEventEvents } from "../objects/types";
 import { Context } from "@umk-stat/statistic-server-core";
-
+import { Topics } from "../objects";
+import {
+    Event, Viewer, EventSubscriptionArgs, TargetExecutionCountSubscriptionArgs,
+    ViewerSubscriptionArgs,
+} from "../objects"
+  
 @Resolver()
 export class ViewerEventEventsResolver {
 
@@ -128,5 +133,89 @@ export class ViewerEventEventsResolver {
         return deleteViewerEventEventssQuery(context);
 
     }
+
+    @Mutation(() => ViewerEventEvents, {
+        nullable: true,
+    })
+    public async postViewerEvent(
+        @Ctx()
+        context: Context,
+        @Arg("eventName", {
+            nullable: false,
+        })
+        eventName: string,
+        @Arg("identifier", {
+            nullable: false,
+        })
+        identifier: string,
+        @Arg("compInfo", {
+            nullable: false,
+        })
+        compInfo: string,
+        @Arg("userInfo", {
+            nullable: false,
+        })
+        userInfo: string,
+
+        @PubSub(Topics.Event)
+        publishEvent: Publisher<ViewerEventEvents>,
+
+        @PubSub(Topics.TargetExecutionCount)
+        publishTargetExecutionCount: Publisher<ViewerEventEvents>,
+
+        @PubSub(Topics.Viewer)
+        publishViewer: Publisher<ViewerEventEvents>,
+    ): Promise<ViewerEventEvents> {
+        console.log('resolver');
+
+        const queryresult = await context.clientDatabaseApi.queries.postViewerEvent(eventName, identifier, compInfo, userInfo);
+        const publishResult = ViewerEventEvents.builderFromDb(queryresult.get())
+
+        await publishEvent(publishResult);
+        await publishViewer(publishResult);
+        await publishTargetExecutionCount(publishResult);
+
+        return ViewerEventEvents.builderFromDb(queryresult.get());
+    }
+
+    @Subscription(() => ViewerEventEvents, {
+        topics: Topics.Event,
+    })
+    public async eventSubscription(
+        @Args(() => EventSubscriptionArgs)
+        __: EventSubscriptionArgs,
+        @Root()
+        root: ViewerEventEvents,
+
+    ): Promise<ViewerEventEvents> {
+        return root;
+    }
+
+    @Subscription(() => ViewerEventEvents, {
+        topics: Topics.TargetExecutionCount,
+    })
+    public async targetExecutionCountSubscription(
+        @Args(() => TargetExecutionCountSubscriptionArgs)
+        __: TargetExecutionCountSubscriptionArgs,
+        @Root()
+        root: ViewerEventEvents,
+
+    ): Promise<ViewerEventEvents> {
+        return root;
+    }
+
+    @Subscription(() => ViewerEventEvents, {
+        topics: Topics.Viewer,
+    })
+    public async viewerSubscription(
+        @Args(() => ViewerSubscriptionArgs)
+        __: ViewerSubscriptionArgs,
+        @Root()
+        root: ViewerEventEvents,
+
+    ): Promise<ViewerEventEvents> {
+        return root;
+    }
+
 
 }

@@ -3,7 +3,7 @@ import {
     Ctx, Field, ObjectType, Root, UseMiddleware,
     Args, Arg,
 } from "type-graphql";
-import { eventsTargetDataLoaderInit, executionCountTargetLoaderInit, viewerCountTargetLoaderInit } from "../../middleware";
+import { eventsTargetDataLoaderInit, executionCountTargetLoaderInit, viewersTargetLoaderInit } from "../../middleware";
 import { Context } from "@umk-stat/statistic-server-core";
 import { getHashArgs } from "@umk-stat/statistic-server-core";
 import { Node } from "@umk-stat/statistic-server-core";
@@ -102,11 +102,11 @@ export class Target implements Node {
         return context.dataLoadersMap.get(edgeType)?.get(hash)?.load(id);;
     }
 
-    @UseMiddleware(viewerCountTargetLoaderInit)
-    @Field(() => Number, {
+    @UseMiddleware(viewersTargetLoaderInit)
+    @Field(() => [String], {
         nullable: false,
     })
-    public async viewerCount(
+    public async viewers(
 
         @Ctx()
         context: Context,
@@ -114,9 +114,9 @@ export class Target implements Node {
         @Root()
             { id }: Target,
 
-    ): Promise<number> {
+    ): Promise<string[]> {
 
-        const edgeType = "viewerCountTargetLoader";
+        const edgeType = "viewersTargetLoader";
         const hash = getHashArgs([]);
         return context.dataLoadersMap.get(edgeType)?.get(hash)?.load(id);;
     }

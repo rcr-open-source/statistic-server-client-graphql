@@ -5,11 +5,9 @@ import {
 import { Node } from "@umk-stat/statistic-server-core";
 import { Context } from "@umk-stat/statistic-server-core";
 import { getHashArgs } from "@umk-stat/statistic-server-core";
-import { targetEventLoaderInit } from "../../middleware";
-import {
-    executionCountLoaderInit,
-} from "../../middleware";
+import { targetEventLoaderInit, viewersEventLoaderInit } from "../../middleware";
 import { Target } from "./Target";
+import { targetQuery } from "../../query";
 
 @ObjectType({
     implements: Node,
@@ -22,6 +20,7 @@ export class Event implements Node {
         const event = new Event();
         event.id = object.id;
         event.name = object.name;
+        event.targetID = object.targetID;
         return event;
 
     }
@@ -32,6 +31,11 @@ export class Event implements Node {
         nullable: false,
     })
     public name: string
+
+    @Field(() => String, {
+        nullable: false,
+    })
+    private targetID: string
 
     @UseMiddleware(targetEventLoaderInit)
     @Field(() => Target, {
@@ -46,17 +50,22 @@ export class Event implements Node {
 
     ): Promise<Target> {
 
+        if (!context.dataLoadersMap) {
+            const target = await targetQuery(context, this.targetID);
+            if (target) return target;
+        }
+
         const eventType = "targetEventLoader";
         const hash = getHashArgs([]);
         return context.dataLoadersMap.get(eventType)?.get(hash)?.load(id);
     
     }
 
-    @UseMiddleware(executionCountLoaderInit)
-    @Field(() => Number, {
+    @UseMiddleware(viewersEventLoaderInit)
+    @Field(() => [String], {
         nullable: false,
     })
-    public async executionCount(
+    public async viewerIds(
 
         @Ctx()
         context: Context,
@@ -64,9 +73,8 @@ export class Event implements Node {
         @Root()
             { id }: Event,
 
-    ): Promise<number> {
-
-        const edgeType = "executionCountLoader";
+    ): Promise<string[]> {
+        const edgeType = "viewersEventLoader";
         const hash = getHashArgs([]);
         return context.dataLoadersMap.get(edgeType)?.get(hash)?.load(id);;
     }

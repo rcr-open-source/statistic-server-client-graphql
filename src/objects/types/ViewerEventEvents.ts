@@ -7,6 +7,7 @@ import { Context } from "@umk-stat/statistic-server-core";
 import { getHashArgs } from "@umk-stat/statistic-server-core";
 import { eventViewerEventEventsLoaderInit } from "../../middleware";
 import { viewerViewerEventEventsLoaderInit } from "../../middleware";
+import { viewerQuery, eventQuery } from "../../query";
 import { Event } from "./Event";
 import { Viewer } from "./Viewer";
 
@@ -21,6 +22,8 @@ export class ViewerEventEvents implements Node {
         const viewerEventEvents = new ViewerEventEvents();
         viewerEventEvents.id = object.id;
         viewerEventEvents.time = object.time;
+        viewerEventEvents.eventID = object.eventID;
+        viewerEventEvents.viewerID = object.viewerID;
         return viewerEventEvents;
 
     }
@@ -31,6 +34,16 @@ export class ViewerEventEvents implements Node {
         nullable: false,
     })
     public time: Date
+
+    @Field(() => String, {
+        nullable: false,
+    })
+    private eventID: string
+
+    @Field(() => String, {
+        nullable: false,
+    })
+    private viewerID: string
 
     @UseMiddleware(eventViewerEventEventsLoaderInit)
     @Field(() => Event, {
@@ -46,6 +59,10 @@ export class ViewerEventEvents implements Node {
 
     ): Promise<Event> {
 
+        if (!context.dataLoadersMap) {
+            const event = await eventQuery(context, this.eventID);
+            if (event) return event;
+        }
         const eventType = "eventViewerEventEventsLoader";
         const hash = getHashArgs([]);
         return context.dataLoadersMap.get(eventType)?.get(hash)?.load(id);
@@ -65,11 +82,13 @@ export class ViewerEventEvents implements Node {
 
     ): Promise<Viewer> {
 
+        if (!context.dataLoadersMap) {
+            const viewer = await viewerQuery(context, this.viewerID);
+            if (viewer) return viewer;
+        }
         const eventType = "viewerViewerEventEventsLoader";
         const hash = getHashArgs([]);
-
-        return context.dataLoadersMap.get(eventType)?.get(hash)?.load(id);
-
+        return await context.dataLoadersMap.get(eventType)?.get(hash)?.load(id);
     }
 
 }
