@@ -6,6 +6,7 @@ export enum Topics {
     Event = "EVENT", 
     TargetExecutionCount = "TARGET_EXECUTION_COUNT",
     Viewer = "VIEWER",
+    ViewerGraphics = "VIEWER_GRAPHICS"
 
 }
 

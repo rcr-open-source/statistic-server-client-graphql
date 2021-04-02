@@ -37,7 +37,6 @@ export const executionCountTargetLoaderInit: MiddlewareFn<Context> = (
                 return result;
             }
         ));
-        console.info(viewerCounts);
         return viewerCounts;
     };
 

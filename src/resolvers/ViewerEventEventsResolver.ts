@@ -165,16 +165,25 @@ export class ViewerEventEventsResolver {
 
         @PubSub(Topics.Viewer)
         publishViewer: Publisher<ViewerEventEvents>,
+
+        @PubSub(Topics.ViewerGraphics)
+        publishGraphicsViewer: Publisher<Viewer>,
     ): Promise<ViewerEventEvents> {
         console.log('resolver');
 
         const queryresult = await context.clientDatabaseApi.queries.postViewerEvent(eventName, identifier, compInfo, userInfo);
+        const viewerDatabase = await context.clientDatabaseApi.queries.findViewer(queryresult.viewerID);
+        const viewer = viewerDatabase == null ? null : Viewer.builderFromDb(viewerDatabase.get())
         const publishResult = ViewerEventEvents.builderFromDb(queryresult.get())
 
         await publishEvent(publishResult);
         await publishViewer(publishResult);
         await publishTargetExecutionCount(publishResult);
 
+        if (viewer) {
+            console.log(viewer);
+            await publishGraphicsViewer(viewer);
+        }
         return ViewerEventEvents.builderFromDb(queryresult.get());
     }
 
@@ -217,5 +226,16 @@ export class ViewerEventEventsResolver {
         return root;
     }
 
+    
+    @Subscription(() => Viewer, {
+        topics: Topics.ViewerGraphics,
+    })
+    public async viewergraphicsSubscription(
+        @Root()
+        root: Viewer,
+
+    ): Promise<Viewer> {
+        return root;
+    }
 
 }
